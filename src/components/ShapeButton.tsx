@@ -5,7 +5,7 @@ interface ShapeButtonProps {
   onClick?: () => void;
 }
 
-const ShapeButton: React.FC<ShapeButtonProps> = ({ icon, onClick }) => {
+const ShapeButton = ({ icon, onClick }: ShapeButtonProps) => {
   return (
     <button
       className="px-4 text-white cursor-pointer hover:text-yellow-400"

@@ -6,6 +6,7 @@ import { FaRegSquareFull } from "react-icons/fa6";
 import { FiCircle } from "react-icons/fi";
 import { IoTriangleOutline } from "react-icons/io5";
 import ShapeButton from "./ShapeButton";
+import Setting from "./Setting";
 
 const CanvasEditor = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -83,7 +84,8 @@ const CanvasEditor = () => {
         <ShapeButton icon={<FiCircle />} onClick={addCircle} />
         <ShapeButton icon={<IoTriangleOutline />} onClick={addTriangle} />
       </div>
-      <canvas className="border border-gray-400 z-10" ref={canvasRef} />;
+      <canvas className="border border-gray-400 z-10" ref={canvasRef} />
+      <Setting canvas={canvas} />
     </div>
   );
 };
