@@ -44,4 +44,4 @@ After run the project you will find the complete task also with bonus points.
 
 ## 🔗 Project live link
 
-[Multi step form app](https://design-editor-two.vercel.app/)
+[Design Editor app](https://design-editor-two.vercel.app/)
