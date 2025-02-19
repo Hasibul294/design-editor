@@ -6,7 +6,6 @@ import { FaRegSquareFull } from "react-icons/fa6";
 import { FiCircle } from "react-icons/fi";
 import { IoTriangleOutline } from "react-icons/io5";
 import { FiSave } from "react-icons/fi";
-import { FiUpload } from "react-icons/fi";
 import { LuImageDown } from "react-icons/lu";
 import ShapeButton from "./ui/ShapeButton";
 import Setting from "./Setting";
@@ -119,28 +118,6 @@ const CanvasEditor = () => {
     }
   };
 
-  // Load design from localStorage
-  const loadDesign = () => {
-    if (!canvas) return;
-
-    const designJSON = localStorage.getItem("canvasDesign");
-    if (!designJSON) {
-      alert("No saved design found!");
-      return;
-    }
-
-    try {
-      canvas.clear();
-      canvas.loadFromJSON(JSON.parse(designJSON), () => {
-        canvas.renderAll();
-        alert("Design loaded successfully!");
-      });
-    } catch (error) {
-      console.error("Error loading design:", error);
-      alert("Failed to load design. Corrupted data.");
-    }
-  };
-
   // Download as PNG
   const downloadImage = () => {
     if (!canvas) return;
@@ -184,18 +161,15 @@ const CanvasEditor = () => {
           </button>
         </div>
       </Dialog>
+
       {/* Shape Buttons */}
       <div className="flex flex-col gap-3 bg-slate-800 py-4 rounded-[4px] fixed top-[50%] left-4 -translate-y-1/2 empty:hidden">
         <ShapeButton icon={<FiSave />} onClick={saveDesign} tooltip="Save" />
-        <ShapeButton
-          icon={<FiUpload />}
-          onClick={loadDesign}
-          tooltip="Load Image"
-        />
+
         <ShapeButton
           icon={<LuImageDown />}
           onClick={downloadImage}
-          tooltip="Download"
+          tooltip="Download Image"
         />
         <ShapeButton
           icon={<FaRegSquareFull />}
@@ -215,7 +189,9 @@ const CanvasEditor = () => {
       </div>
 
       {/* Canvas */}
-      <canvas className="border border-gray-400 z-10" ref={canvasRef} />
+      <div className="relative p-2 rounded-lg shadow-lg bg-white bg-opacity-20 backdrop-blur-lg border border-white/30">
+        <canvas className="border border-gray-400 z-10" ref={canvasRef} />
+      </div>
 
       {/* Settings Panel */}
       <Setting canvas={canvas} />
