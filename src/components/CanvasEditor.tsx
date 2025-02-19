@@ -10,10 +10,12 @@ import { FiUpload } from "react-icons/fi";
 import { LuImageDown } from "react-icons/lu";
 import ShapeButton from "./ui/ShapeButton";
 import Setting from "./Setting";
+import Dialog from "./ui/Dialog";
 
 const CanvasEditor = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvas, setCanvas] = useState<Canvas | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -36,14 +38,28 @@ const CanvasEditor = () => {
     if (canvas) {
       const designJSON = localStorage.getItem("canvasDesign");
       if (designJSON) {
-        canvas.loadFromJSON(JSON.parse(designJSON), () => {
-          canvas.renderAll();
-          canvas.requestRenderAll(); // 🔹 Force re-render
-        });
+        setIsDialogOpen(true);
       }
     }
   }, [canvas]);
 
+  const handleRestore = () => {
+    if (!canvas) return;
+
+    const designJSON = localStorage.getItem("canvasDesign");
+    if (designJSON) {
+      canvas.loadFromJSON(JSON.parse(designJSON), () => {
+        canvas.renderAll();
+        canvas.requestRenderAll();
+      });
+    }
+    setIsDialogOpen(false);
+  };
+
+  const handleCancel = () => {
+    localStorage.removeItem("canvasDesign");
+    setIsDialogOpen(false);
+  };
   const addRectangle = () => {
     if (canvas) {
       const rect = new Rect({
@@ -144,7 +160,30 @@ const CanvasEditor = () => {
   };
 
   return (
-    <div className="font-sans text-center flex flex-col justify-start items-center px-[16px] py-[100px] bg-gray-300 min-h-[100vh] h-full">
+    <div className="font-sans text-center flex flex-col justify-start items-center px-[16px] py-[150px] bg-gray-300 min-h-[100vh] h-full">
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleCancel}
+        title="Restore Previous Version"
+      >
+        <p>
+          A previous version of the canvas was found. Do you want to restore it?
+        </p>
+        <div className="flex justify-between items-center mt-4">
+          <button
+            className="text-white px-4 py-2 bg-gray-800 rounded mr-2"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={handleRestore}
+          >
+            Restore
+          </button>
+        </div>
+      </Dialog>
       {/* Shape Buttons */}
       <div className="flex flex-col gap-3 bg-slate-800 py-4 rounded-[4px] fixed top-[50%] left-4 -translate-y-1/2 empty:hidden">
         <ShapeButton icon={<FiSave />} onClick={saveDesign} tooltip="Save" />
