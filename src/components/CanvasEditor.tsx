@@ -16,21 +16,33 @@ const CanvasEditor = () => {
   const [canvas, setCanvas] = useState<Canvas | null>(null);
 
   useEffect(() => {
-    if (canvasRef.current) {
-      const initCanvas = new Canvas(canvasRef.current, {
-        width: 500,
-        height: 500,
-      });
-      initCanvas.backgroundColor = "#fff";
-      initCanvas.renderAll();
+    if (!canvasRef.current) return;
 
-      setCanvas(initCanvas);
+    const initCanvas = new Canvas(canvasRef.current, {
+      width: 500,
+      height: 500,
+    });
+    initCanvas.backgroundColor = "#fff";
+    initCanvas.renderAll();
 
-      return () => {
-        initCanvas.dispose();
-      };
-    }
+    setCanvas(initCanvas);
+
+    return () => {
+      initCanvas.dispose();
+    };
   }, []);
+
+  useEffect(() => {
+    if (canvas) {
+      const designJSON = localStorage.getItem("canvasDesign");
+      if (designJSON) {
+        canvas.loadFromJSON(JSON.parse(designJSON), () => {
+          canvas.renderAll();
+          canvas.requestRenderAll(); // 🔹 Force re-render
+        });
+      }
+    }
+  }, [canvas]);
 
   const addRectangle = () => {
     if (canvas) {
@@ -75,43 +87,60 @@ const CanvasEditor = () => {
 
   // Save design to localStorage
   const saveDesign = () => {
-    if (canvas) {
+    if (!canvas) return;
+    if (canvas.getObjects().length === 0) {
+      alert("Canvas is empty. Add shapes before saving.");
+      return;
+    }
+
+    try {
       const design = canvas.toJSON();
       localStorage.setItem("canvasDesign", JSON.stringify(design));
       alert("Design saved successfully!");
+    } catch (error) {
+      console.error("Error saving design:", error);
+      alert("Failed to save design. Local storage might be full.");
     }
   };
 
   // Load design from localStorage
   const loadDesign = () => {
-    if (canvas) {
-      const designJSON = localStorage.getItem("canvasDesign");
-      if (designJSON) {
-        canvas.clear();
-        canvas.loadFromJSON(JSON.parse(designJSON), () => {
-          canvas.renderAll();
-          alert("Design loaded successfully!");
-        });
-      } else {
-        alert("No saved design found!");
-      }
+    if (!canvas) return;
+
+    const designJSON = localStorage.getItem("canvasDesign");
+    if (!designJSON) {
+      alert("No saved design found!");
+      return;
+    }
+
+    try {
+      canvas.clear();
+      canvas.loadFromJSON(JSON.parse(designJSON), () => {
+        canvas.renderAll();
+        alert("Design loaded successfully!");
+      });
+    } catch (error) {
+      console.error("Error loading design:", error);
+      alert("Failed to load design. Corrupted data.");
     }
   };
 
   // Download as PNG
   const downloadImage = () => {
-    if (canvas) {
-      const dataURL = canvas.toDataURL({
-        format: "png",
-        quality: 1.0,
-      });
-      const link = document.createElement("a");
-      link.download = "canvas-design.png";
-      link.href = dataURL;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    if (!canvas) return;
+
+    const dataURL = canvas.toDataURL({
+      format: "png",
+      quality: 1.0,
+      multiplier: 1,
+    });
+
+    const link = document.createElement("a");
+    link.download = "canvas-design.png";
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
