@@ -5,6 +5,9 @@ import { Canvas, Circle, Rect, Triangle } from "fabric";
 import { FaRegSquareFull } from "react-icons/fa6";
 import { FiCircle } from "react-icons/fi";
 import { IoTriangleOutline } from "react-icons/io5";
+import { FiSave } from "react-icons/fi";
+import { FiUpload } from "react-icons/fi";
+import { LuImageDown } from "react-icons/lu";
 import ShapeButton from "./ui/ShapeButton";
 import Setting from "./Setting";
 
@@ -45,20 +48,20 @@ const CanvasEditor = () => {
 
   const addCircle = () => {
     if (canvas) {
-      const rect = new Circle({
+      const circle = new Circle({
         top: 150,
         left: 150,
         radius: 50,
         fill: "#780C28",
       });
 
-      canvas.add(rect);
+      canvas.add(circle);
     }
   };
 
   const addTriangle = () => {
     if (canvas) {
-      const rect = new Triangle({
+      const triangle = new Triangle({
         top: 100,
         left: 300,
         width: 100,
@@ -66,18 +69,87 @@ const CanvasEditor = () => {
         fill: "#638C6D",
       });
 
-      canvas.add(rect);
+      canvas.add(triangle);
+    }
+  };
+
+  // Save design to localStorage
+  const saveDesign = () => {
+    if (canvas) {
+      const design = canvas.toJSON();
+      localStorage.setItem("canvasDesign", JSON.stringify(design));
+      alert("Design saved successfully!");
+    }
+  };
+
+  // Load design from localStorage
+  const loadDesign = () => {
+    if (canvas) {
+      const designJSON = localStorage.getItem("canvasDesign");
+      if (designJSON) {
+        canvas.clear();
+        canvas.loadFromJSON(JSON.parse(designJSON), () => {
+          canvas.renderAll();
+          alert("Design loaded successfully!");
+        });
+      } else {
+        alert("No saved design found!");
+      }
+    }
+  };
+
+  // Download as PNG
+  const downloadImage = () => {
+    if (canvas) {
+      const dataURL = canvas.toDataURL({
+        format: "png",
+        quality: 1.0,
+      });
+      const link = document.createElement("a");
+      link.download = "canvas-design.png";
+      link.href = dataURL;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
   return (
     <div className="font-sans text-center flex flex-col justify-start items-center px-[16px] py-[100px] bg-gray-300 min-h-[100vh] h-full">
+      {/* Shape Buttons */}
       <div className="flex flex-col gap-3 bg-slate-800 py-4 rounded-[4px] fixed top-[50%] left-4 -translate-y-1/2 empty:hidden">
-        <ShapeButton icon={<FaRegSquareFull />} onClick={addRectangle} />
-        <ShapeButton icon={<FiCircle />} onClick={addCircle} />
-        <ShapeButton icon={<IoTriangleOutline />} onClick={addTriangle} />
+        <ShapeButton icon={<FiSave />} onClick={saveDesign} tooltip="Save" />
+        <ShapeButton
+          icon={<FiUpload />}
+          onClick={loadDesign}
+          tooltip="Load Image"
+        />
+        <ShapeButton
+          icon={<LuImageDown />}
+          onClick={downloadImage}
+          tooltip="Download"
+        />
+        <ShapeButton
+          icon={<FaRegSquareFull />}
+          onClick={addRectangle}
+          tooltip="Add Rectangle"
+        />
+        <ShapeButton
+          icon={<FiCircle />}
+          onClick={addCircle}
+          tooltip="Add Circle"
+        />
+        <ShapeButton
+          icon={<IoTriangleOutline />}
+          onClick={addTriangle}
+          tooltip="Add Triangle"
+        />
       </div>
+
+      {/* Canvas */}
       <canvas className="border border-gray-400 z-10" ref={canvasRef} />
+
+      {/* Settings Panel */}
       <Setting canvas={canvas} />
     </div>
   );
