@@ -4,14 +4,23 @@ interface ShapeButtonProps {
   icon: React.ReactNode;
   onClick?: () => void;
   tooltip?: string;
+  disabled?: boolean; // Add the disabled prop
 }
 
-const ShapeButton = ({ icon, onClick, tooltip }: ShapeButtonProps) => {
+const ShapeButton = ({
+  icon,
+  onClick,
+  tooltip,
+  disabled,
+}: ShapeButtonProps) => {
   return (
     <div className="relative group">
       <button
-        className="px-4 text-white cursor-pointer hover:text-yellow-400"
+        className={`px-4 text-white cursor-pointer hover:text-yellow-400 ${
+          disabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         onClick={onClick}
+        disabled={disabled} // Pass the disabled prop to the button
       >
         {icon}
       </button>
