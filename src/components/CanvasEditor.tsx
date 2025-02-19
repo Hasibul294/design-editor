@@ -5,12 +5,11 @@ import { Canvas, Circle, Rect, Triangle } from "fabric";
 import { FaRegSquareFull } from "react-icons/fa6";
 import { FiCircle } from "react-icons/fi";
 import { IoTriangleOutline } from "react-icons/io5";
-import ShapeButton from "./ShapeButton";
+import ShapeButton from "./ui/ShapeButton";
 import Setting from "./Setting";
 
 const CanvasEditor = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  //   const fabricCanvasRef = useRef<Canvas | null>(null);
   const [canvas, setCanvas] = useState<Canvas | null>(null);
 
   useEffect(() => {
@@ -28,12 +27,6 @@ const CanvasEditor = () => {
         initCanvas.dispose();
       };
     }
-
-    // return () => {
-    //   if (fabricCanvasRef.current) {
-    //     fabricCanvasRef.current.dispose();
-    //   }
-    // };
   }, []);
 
   const addRectangle = () => {

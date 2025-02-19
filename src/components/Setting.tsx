@@ -6,7 +6,7 @@ type SettingProps = {
   canvas: Canvas | null;
 };
 
-const Setting: React.FC<SettingProps> = ({ canvas }) => {
+const Setting = ({ canvas }: SettingProps) => {
   const [selectedObject, setSelectedObject] = useState<
     Rect | Circle | Triangle | null
   >(null);
@@ -99,8 +99,11 @@ const Setting: React.FC<SettingProps> = ({ canvas }) => {
     }
   };
 
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleColorChange = (
+    newColor: string | React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value =
+      typeof newColor === "string" ? newColor : newColor.target.value;
     setColor(value);
 
     if (selectedObject) {
@@ -110,7 +113,7 @@ const Setting: React.FC<SettingProps> = ({ canvas }) => {
   };
 
   return (
-    <div className="fixed right-4 top-[50%] -translate-y-1/2 gap-2 flex flex-col bg-slate-800 px-2 py-6 rounded text-left empty:p-0">
+    <div className="fixed right-4 top-[40%] -translate-y-1/2 gap-2 flex flex-col bg-slate-800 px-2 py-6 rounded text-left empty:p-0">
       {selectedObject && (
         <>
           {selectedObject instanceof Rect ||
