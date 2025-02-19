@@ -2,6 +2,14 @@
 
 Build a Design Editor with Next.js, Tailwind CSS, and Fabric js
 
+## 🚀 Features
+
+- 🎨 **Add Custom Color** – Customize shapes with any color of your choice.
+- 🔄 **Drag and Resize** – Move and resize shapes easily on the canvas.
+- 💾 **Save Data** – Store your design progress and reload it anytime.
+- 📥 **Download Shapes** – Export your designs as image files.
+- ⏪ **Undo & Redo Functionality** – Go back and forth between changes for better editing control.
+
 ## Run Project in Locally
 
 Clone the project
